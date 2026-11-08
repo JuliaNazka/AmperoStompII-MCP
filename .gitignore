@@ -1,0 +1,18 @@
+# Só os MCPs da Ampero e do Chocolate entram; o resto desta pasta (Navis etc.) fica de fora.
+/*
+!/.gitignore
+!/README.md
+!/ampero/
+!/chocolate/
+
+# Capturas, manuais, fotos, backups do aparelho e o site (repositório próprio)
+/ampero/_ref/
+/ampero/web/
+/chocolate/_ref/
+/chocolate/backups/
+
+# Dados da Hotone: gerar com ampero/make_models.py
+/ampero/models.json
+
+__pycache__/
+*.pyc
