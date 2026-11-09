@@ -1,5 +1,9 @@
 """Descompressor LZO1X (formato usado pela Ampero II nos dumps de patch).
-Segue o lzo1x_decompress de referência (minilzo)."""
+Segue o lzo1x_decompress de referência (minilzo).
+
+Porte em Python derivado do minilzo / LZO, Copyright (C) Markus F.X.J. Oberhumer,
+distribuído sob a GNU GPL versão 2 ou posterior. Este arquivo é distribuído sob a GPL-3.0 (ver LICENSE).
+"""
 
 
 def lzo1x_decompress(src: bytes) -> bytes:

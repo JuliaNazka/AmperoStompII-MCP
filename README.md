@@ -69,3 +69,8 @@ Exemplo de registro no Claude Code (`~/.claude.json`, em `mcpServers`):
 ```
 
 Com o Python da Microsoft Store, rode com `-E` antes do caminho do script.
+
+## Licença
+
+GPL-3.0 (ver [LICENSE](LICENSE)). O `ampero/lzo.py` é um porte do descompressor do minilzo/LZO, de Markus F.X.J.
+Oberhumer, que é GPL versão 2 ou posterior; por isso o projeto todo é GPL-3.0.
