@@ -5,6 +5,8 @@ Dois servidores MCP para controlar, pelo Claude, uma pedaleira **Hotone Ampero I
 
 *Read in English: [README.md](README.md)*
 
+**App para celular:** [Ampero Remoto](https://github.com/JuliaNazka/ampero-remoto), o mesmo protocolo em JavaScript (PWA com Web MIDI) para controlar a pedaleira pelo Android. [Abrir o app](https://julianazka.github.io/ampero-remoto/).
+
 Projeto pessoal, sem relação com a Hotone nem com a M-Vave. O protocolo SysEx dos dois aparelhos foi decifrado
 observando o tráfego dos editores oficiais; use por sua conta.
 

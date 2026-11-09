@@ -5,6 +5,8 @@ Two MCP servers that let Claude control a **Hotone Ampero II Stomp** guitar proc
 
 *Leia em português: [README.pt-BR.md](README.pt-BR.md)*
 
+**Companion phone app:** [Ampero Remoto](https://github.com/JuliaNazka/ampero-remoto), the same protocol in JavaScript (Web MIDI PWA) to control the pedal from an Android phone. [Open it live](https://julianazka.github.io/ampero-remoto/).
+
 <!-- DEMO: put a short GIF here (Claude switching a patch or turning a slot on, and the pedal reacting).
 ![demo](docs/demo.gif) -->
 
