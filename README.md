@@ -1,76 +1,87 @@
 # AmperoStompII-MCP
 
-Dois servidores MCP para controlar, pelo Claude, uma pedaleira **Hotone Ampero II Stomp** e um controlador
-**M-Vave Chocolate Plus**, ambos ligados no PC por USB MIDI.
+Two MCP servers that let Claude control a **Hotone Ampero II Stomp** guitar processor and an
+**M-Vave Chocolate Plus** foot controller, both connected to the PC over USB MIDI.
 
-Projeto pessoal, sem relação com a Hotone nem com a M-Vave. O protocolo SysEx dos dois aparelhos foi decifrado
-observando o tráfego dos editores oficiais; use por sua conta.
+*Leia em português: [README.pt-BR.md](README.pt-BR.md)*
+
+<!-- DEMO: put a short GIF here (Claude switching a patch or turning a slot on, and the pedal reacting).
+![demo](docs/demo.gif) -->
+
+Personal project, not affiliated with Hotone or M-Vave. The SysEx protocol of both devices was decoded by
+watching the traffic of the official editors; use at your own risk.
+
+## Example prompts
+
+- *"Switch to patch A01-2 and turn on slot B3."*
+- *"Read the current patch and tell me which amp model is in the chain."*
+- *"Open the tuner."*
+- *"Set pedal 1 on the Chocolate to toggle slot A1 on the Ampero."*
 
 ## ampero: Hotone Ampero II Stomp
 
-Testado com firmware 2.4.0 e editor 1.4.0.
+Tested with firmware 2.4.0 and editor 1.4.0.
 
-- **CC (tabela do manual 1.3.0):** `select_patch`, `step_patch`, `step_bank`, `set_slot` (liga e desliga A1–B6),
+- **CC (table from manual 1.3.0):** `select_patch`, `step_patch`, `step_bank`, `set_slot` (turns A1–B6 on and off),
   `tuner`, `set_tempo`, `tap_tempo`, `set_patch_volume`, `expression`, `quick_access`, `looper`, `device_mode`,
   `send_raw`.
-- **SysEx:** `read_patch` (cadeia, modelos, knobs e liga/desliga por cena), `list_patches`, `select_scene`,
+- **SysEx:** `read_patch` (chain, models, knobs and on/off per scene), `list_patches`, `select_scene`,
   `set_param`, `set_model`, `save_patch`, `list_models`.
-- `listen` mostra o que a pedaleira manda.
+- `listen` shows what the pedal sends.
 
-Mudanças de knob, modelo e cena valem na hora, mas só ficam no patch com `save_patch`.
+Knob, model and scene changes apply immediately, but they are only stored in the patch with `save_patch`.
 
-Na Stomp: GLOBAL > MIDI > MIDI IN SOURCE em "USB Only" ou "Mixed". O canal de entrada USB tem que bater com
-a variável `AMPERO_CHANNEL` (padrão 5).
+On the Stomp: GLOBAL > MIDI > MIDI IN SOURCE set to "USB Only" or "Mixed". The USB input channel must match
+the `AMPERO_CHANNEL` variable (default 5).
 
-**models.json** (nomes dos modelos e parâmetros) não está no repositório, porque os dados são da Hotone. Com o
-editor oficial instalado, gere com:
+**models.json** (model and parameter names) is not in the repository, because the data belongs to Hotone. With the
+official editor installed, generate it with:
 
 ```
 python ampero/make_models.py
 ```
 
-Detalhes do protocolo no topo de `ampero/hotone.py`. O dump de patch vem comprimido em LZO1X (`ampero/lzo.py`).
+Protocol details at the top of `ampero/hotone.py`. The patch dump is LZO1X-compressed (`ampero/lzo.py`).
 
 ## chocolate: M-Vave Chocolate Plus
 
-Lê e grava a configuração dos pedais pela USB, como o CubeSuite faz. A chave do Chocolate tem que estar em **U**.
+Reads and writes the pedal configuration over USB, the same way CubeSuite does. The Chocolate switch must be set to **U**.
 
-- `read_buttons` / `set_button`: modo Advanced custom (modo de pisada e até 16 mensagens por banco).
-  Funciona no firmware 012; o 010 não lê esse formato.
-- `read_stomp` / `set_stomp`: modo Custom, um CC por pedal, alternando 127/0 a cada pisada.
-- `listen`, `backup`, `restore`: escuta as pisadas e salva ou volta a memória inteira (arquivo .fcp, igual ao
-  Export do CubeSuite).
+- `read_buttons` / `set_button`: Advanced custom mode (press mode and up to 16 messages per bank).
+  Works on firmware 012; firmware 010 does not read this format.
+- `read_stomp` / `set_stomp`: Custom mode, one CC per pedal, toggling 127/0 on each press.
+- `listen`, `backup`, `restore`: listens to presses and saves or restores the whole memory (.fcp file, same as
+  CubeSuite's Export).
 
-Os backups ficam em `chocolate/backups/` (fora do repositório). Protocolo e mapa da memória no topo de
+Backups go to `chocolate/backups/` (outside the repository). Protocol and memory map at the top of
 `chocolate/choco.py`.
 
-## Instalação
+## Install
 
-Python 3.11 ou mais novo:
+Python 3.11 or newer:
 
 ```
 pip install mido python-rtmidi "mcp>=2"
 ```
 
-Exemplo de registro no Claude Code (`~/.claude.json`, em `mcpServers`):
+Example registration in Claude Code (`~/.claude.json`, under `mcpServers`):
 
 ```json
 "ampero": {
   "type": "stdio",
   "command": "python",
-  "args": ["C:\\caminho\\para\\ampero\\ampero_mcp.py"],
+  "args": ["C:\\path\\to\\ampero\\ampero_mcp.py"],
   "env": { "AMPERO_CHANNEL": "5" }
 },
 "chocolate": {
   "type": "stdio",
   "command": "python",
-  "args": ["C:\\caminho\\para\\chocolate\\chocolate_mcp.py"]
+  "args": ["C:\\path\\to\\chocolate\\chocolate_mcp.py"]
 }
 ```
 
-Com o Python da Microsoft Store, rode com `-E` antes do caminho do script.
+With the Microsoft Store Python, add `-E` before the script path.
 
-## Licença
+## License
 
-GPL-3.0 (ver [LICENSE](LICENSE)). O `ampero/lzo.py` é um porte do descompressor do minilzo/LZO, de Markus F.X.J.
-Oberhumer, que é GPL versão 2 ou posterior; por isso o projeto todo é GPL-3.0.
+GPL-3.0, see [LICENSE](LICENSE). The LZO1X decompressor follows the miniLZO reference code, which is GPL.
