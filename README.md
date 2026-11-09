@@ -13,6 +13,63 @@ Two MCP servers that let Claude control a **Hotone Ampero II Stomp** guitar proc
 Personal project, not affiliated with Hotone or M-Vave. The SysEx protocol of both devices was decoded by
 watching the traffic of the official editors; use at your own risk.
 
+## Why this exists
+
+```mermaid
+flowchart TD
+    P1["Ampero II Stomp<br/>the manual only documents CCs;<br/>scenes, knobs, models and saving<br/>only through the Windows editor"]
+    P2["Chocolate Plus<br/>configured only in CubeSuite;<br/>firmware 010 ignored the<br/>advanced mode it wrote"]
+    P3["Goal<br/>ask for changes in plain language<br/>and play live without a PC"]
+    D["Decode the SysEx protocols<br/>by watching the official editors"]
+    M["Two MCP servers<br/>Claude reads and writes both devices"]
+    A["Ampero Remoto app<br/>same protocol on an Android phone"]
+    L["Chocolate toggles Ampero slots<br/>over Bluetooth, no PC on stage"]
+    P1 --> D
+    P2 --> D
+    P3 --> D
+    D --> M
+    D --> A
+    M --> L
+```
+
+## Architecture
+
+```mermaid
+flowchart TB
+    C["Claude<br/>(Claude Code / Desktop)"]
+
+    subgraph PC["PC"]
+        direction LR
+        subgraph AMP["ampero_mcp.py"]
+            H["hotone.py<br/>SysEx frames, nibbles, checksum"]
+            Z["lzo.py<br/>LZO1X patch dump"]
+            J["models.json<br/>from make_models.py"]
+        end
+        subgraph CHO["chocolate_mcp.py"]
+            K["choco.py<br/>7-bit packing, memory map"]
+            B[".fcp backups"]
+        end
+        R["mido + python-rtmidi"]
+        E["Official editors<br/>Ampero II editor, CubeSuite<br/>(protocol reference only)"]
+    end
+
+    S["Hotone Ampero II Stomp"]
+    F["M-Vave Chocolate Plus"]
+    X["MS1 Bluetooth receiver"]
+    W["Ampero Remoto<br/>Android Chrome, Web MIDI"]
+
+    C -- "MCP over stdio" --> AMP
+    C -- "MCP over stdio" --> CHO
+    AMP --> R
+    CHO --> R
+    E -. "editor model database" .-> J
+    R -- "USB MIDI: CC + SysEx" --> S
+    R -- "USB MIDI: SysEx read/write memory" --> F
+    F -- "Bluetooth MIDI: CC 48-59" --> X
+    X -- "DIN MIDI IN" --> S
+    W -- "USB OTG: same SysEx" --> S
+```
+
 ## Example prompts
 
 - *"Switch to patch A01-2 and turn on slot B3."*
